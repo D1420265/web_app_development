@@ -35,12 +35,20 @@ def init_db():
     初始化資料庫——執行 database/schema.sql 建立所有資料表。
 
     此函式會讀取 SQL 檔案並一次性執行所有 CREATE TABLE 語句。
-    由於使用 IF NOT EXISTS，重複執行不會覆蓋既有資料。
+    並確保建立一個預設使用者 (用於本地測試，避免外鍵限制報錯)。
     """
     conn = get_db_connection()
     try:
         with open('database/schema.sql', 'r', encoding='utf-8') as f:
             conn.executescript(f.read())
+        
+        # 確保存在預設的 Local User (ID 會自動給 1 如果是全空的 DB)
+        # 用 INSERT OR IGNORE 防止重複執行時報錯
+        conn.execute('''
+            INSERT OR IGNORE INTO users (id, username, email, password_hash)
+            VALUES (1, 'LocalUser', 'local@example.com', 'test_hash_only')
+        ''')
+        
         conn.commit()
         print("Database initialized successfully.")
     except Exception as e:
