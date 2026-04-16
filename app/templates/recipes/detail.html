@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <!-- 導覽列麵包屑 -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('recipe.my_collection') }}" class="text-decoration-none text-muted">我的收藏</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ recipe.title }}</li>
+            </ol>
+        </nav>
+
+        <div class="glass-card p-4 p-md-5">
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <h1 class="fw-bold mb-2 text-dark">{{ recipe.title }}</h1>
+                    <div class="text-muted small">
+                        <i class="bi bi-clock me-1"></i>建立於 {{ recipe.created_at[:10] if recipe.created_at else '未知日期' }}
+                        {% if recipe.portions %}
+                        <span class="ms-3"><i class="bi bi-people me-1"></i>{{ recipe.portions }} 人份</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- 操作按鈕區 -->
+                <div class="dropdown">
+                    <button class="btn btn-light rounded-circle shadow-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 40px; height: 40px;">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow">
+                        <li><a class="dropdown-item text-primary" href="{{ url_for('recipe.edit', id=recipe.id) }}"><i class="bi bi-pencil-square me-2"></i>編輯食譜</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form action="{{ url_for('recipe.delete', id=recipe.id) }}" method="POST" onsubmit="return confirm('確定要刪除這筆食譜嗎？刪除後無法復原。');">
+                                <button type="submit" class="dropdown-item text-danger"><i class="bi bi-trash me-2"></i>刪除食譜</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <hr class="mb-4 border-light">
+
+            <div class="mb-5">
+                <h4 class="fw-bold mb-3 text-secondary">所需食材</h4>
+                {% if recipe.ingredients %}
+                <ul class="list-group list-group-flush mb-0 border-bottom border-top">
+                    {% for ingredient in recipe.ingredients %}
+                    <li class="list-group-item bg-transparent border-light py-2 px-0 d-flex align-items-center">
+                        <i class="bi bi-circle-fill text-primary" style="font-size: 0.5rem; margin-right: 0.8rem;"></i>
+                        {{ ingredient.name }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted">未提供食材資訊</p>
+                {% endif %}
+            </div>
+
+            <div class="mb-5">
+                <h4 class="fw-bold mb-3 text-secondary">料理步驟</h4>
+                <div class="p-4 bg-light rounded-3" style="white-space: pre-wrap; line-height: 1.8;">{{ recipe.steps }}</div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

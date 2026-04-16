@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}搜尋食譜 - 食譜收藏夾{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mb-5">
+    <div class="col-md-8 text-center">
+        <h2 class="fw-bold mb-4">全站搜尋</h2>
+        <form method="GET" action="{{ url_for('main.search') }}" class="d-flex shadow-sm rounded-pill bg-white p-1">
+            <input type="text" name="q" value="{{ keyword }}" class="form-control border-0 bg-transparent ms-3" placeholder="請輸入食譜名稱或關鍵字..." aria-label="搜尋">
+            <button type="submit" class="btn btn-primary rounded-pill px-4 fw-medium">
+                <i class="bi bi-search me-1"></i> 搜尋
+            </button>
+        </form>
+    </div>
+</div>
+
+{% if keyword %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold m-0 m-text-secondary">搜尋「<span class="text-primary">{{ keyword }}</span>」的結果</h4>
+    <span class="badge bg-light text-secondary border rounded-pill px-3 py-2">共找到 {{ recipes|length }} 筆</span>
+</div>
+{% endif %}
+
+{% if keyword and not recipes %}
+<div class="text-center py-5">
+    <div class="mb-4 text-muted">
+        <i class="bi bi-search" style="font-size: 3rem;"></i>
+    </div>
+    <h5 class="text-secondary fw-semibold">找不到相關食譜</h5>
+    <p class="text-muted">試試看其他的關鍵字吧！</p>
+</div>
+{% elif recipes %}
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for r in recipes %}
+    <div class="col">
+        <div class="card h-100 glass-card border-0 text-decoration-none">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title fw-bold text-dark text-truncate mb-0" style="max-width: 80%;">{{ r.title }}</h5>
+                    {% if r.portions %}
+                    <span class="badge bg-light text-secondary border rounded-pill px-2 py-1"><i class="bi bi-people me-1"></i>{{ r.portions }}</span>
+                    {% endif %}
+                </div>
+                <p class="card-text text-muted small mt-3" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; min-height: 4.5rem;">
+                    {{ r.steps }}
+                </p>
+            </div>
+            <div class="card-footer bg-transparent border-0 p-4 pt-0 text-end">
+                <a href="{{ url_for('recipe.detail', id=r.id) }}" class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-medium">
+                    查看詳情 <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

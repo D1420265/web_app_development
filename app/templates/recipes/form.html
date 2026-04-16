@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="glass-card p-4 p-md-5">
+            <h2 class="mb-4 fw-bold">
+                {% if recipe %}編輯食譜{% else %}新增食譜{% endif %}
+            </h2>
+            
+            <form method="POST" action="{% if recipe %}{{ url_for('recipe.edit', id=recipe.id) }}{% else %}{{ url_for('recipe.add') }}{% endif %}">
+                <div class="mb-4">
+                    <label for="title" class="form-label fw-semibold text-secondary">食譜名稱 <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control form-control-lg bg-light border-0" id="title" name="title" 
+                           value="{{ title if title is defined else (recipe.title if recipe else '') }}" placeholder="例如：拿波里義大利麵" required>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="portions" class="form-label fw-semibold text-secondary">份量 (人份)</label>
+                    <input type="number" class="form-control bg-light border-0" id="portions" name="portions" min="1" 
+                           value="{{ portions if portions is defined else (recipe.portions if recipe and recipe.portions else '') }}" placeholder="例如：2">
+                </div>
+
+                <div class="mb-4">
+                    <label for="ingredients" class="form-label fw-semibold text-secondary">食材</label>
+                    <input type="text" class="form-control bg-light border-0" id="ingredients" name="ingredients" 
+                           value="{{ ingredients_str if ingredients_str is defined else '' }}" placeholder="例如：雞蛋, 番茄, 鹽 (多項請用逗號分隔)">
+                    <div class="form-text text-muted mt-2">提示：以逗號分隔多項食材名稱。</div>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="steps" class="form-label fw-semibold text-secondary">料理步驟 <span class="text-danger">*</span></label>
+                    <textarea class="form-control bg-light border-0" id="steps" name="steps" rows="6" 
+                              placeholder="請詳細描述作法..." required>{{ steps if steps is defined else (recipe.steps if recipe else '') }}</textarea>
+                    <div class="form-text text-muted mt-2">提示：可以分點條列，例如「1. 備料... 2. 下鍋...」</div>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-5">
+                    <a href="{{ url_for('recipe.my_collection') }}" class="btn btn-light px-4 me-md-2 text-muted fw-medium">取消</a>
+                    <button type="submit" class="btn btn-primary px-5 fw-medium shadow-sm">
+                        {% if recipe %}更新儲存{% else %}確認新增{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

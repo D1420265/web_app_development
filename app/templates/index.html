@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- 英雄區塊 (Hero Section) -->
+<div class="row align-items-center mb-5 py-5 bg-white rounded-4 shadow-sm">
+    <div class="col-md-6 px-5">
+        <h1 class="display-5 fw-bold text-dark mb-3">尋找你的下一道料理靈感</h1>
+        <p class="lead text-muted mb-4">探索各種美味食譜，或是打開冰箱，告訴我們你有什麼食材，我們幫你想辦法！</p>
+        <div class="d-flex gap-3">
+            <a href="{{ url_for('main.search_by_ingredients') }}" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm">
+                <i class="bi bi-search me-2"></i> 用食材找食譜
+            </a>
+            <a href="{{ url_for('recipe.add') }}" class="btn btn-outline-secondary btn-lg rounded-pill px-4 bg-white">
+                <i class="bi bi-plus-lg me-2"></i> 分享食譜
+            </a>
+        </div>
+    </div>
+    <div class="col-md-6 text-center d-none d-md-block">
+        <i class="bi bi-egg-fried text-primary" style="font-size: 10rem; opacity: 0.1;"></i>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold m-0"><i class="bi bi-stars text-warning me-2"></i>最新探索</h3>
+</div>
+
+{% if not recipes %}
+<div class="text-center py-5">
+    <div class="mb-4 text-muted">
+        <i class="bi bi-journal-x" style="font-size: 3rem;"></i>
+    </div>
+    <h4 class="text-secondary fw-semibold">尚無公開食譜</h4>
+    <p class="text-muted">目前系統中還沒有食譜，搶先成為第一位分享的人吧！</p>
+</div>
+{% else %}
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for r in recipes %}
+    <div class="col">
+        <div class="card h-100 glass-card border-0 text-decoration-none">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title fw-bold text-dark text-truncate mb-0" style="max-width: 80%;">{{ r.title }}</h5>
+                    {% if r.portions %}
+                    <span class="badge bg-light text-secondary border rounded-pill px-2 py-1"><i class="bi bi-people me-1"></i>{{ r.portions }}</span>
+                    {% endif %}
+                </div>
+                <!-- 顯示建立時間 (以 YYYY-MM-DD 格式顯示) -->
+                <div class="text-muted small mb-3">
+                    <i class="bi bi-clock me-1"></i>{{ r.created_at[:10] if r.created_at else '' }}
+                </div>
+                <p class="card-text text-muted small mt-3" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; min-height: 4.5rem;">
+                    {{ r.steps }}
+                </p>
+            </div>
+            <div class="card-footer bg-transparent border-0 p-4 pt-0 text-end">
+                <a href="{{ url_for('recipe.detail', id=r.id) }}" class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-medium">
+                    查看詳情 <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
